@@ -36,43 +36,58 @@ A sophisticated price optimization system using Soft Actor-Critic (SAC) reinforc
 1. Clone the repository:
 ```bash
 git clone https://github.com/ShivamB25/PS3
-cd price-optimizer
+cd PS3
 ```
 
-2. Backend:
+2. Backend Setup:
 ```bash
+cd Backend
 uv sync
 source .venv/bin/activate
-uvicorn src.price_optimizer.api:app --reload --port 8000
-
+uvicorn src.price_optimizer.api.price_api:app --reload --port 8000
 ```
-3. Frontend
+
+3. Frontend Setup:
 ```bash
-bun install // npm i
-bun run dev --port 3001 // npm run dev --port 3001
+cd Frontend
+bun install  # or npm install
+bun run dev --port 3001  # or npm run dev -- --port 3001
+```
 
 ## Project Structure
 
 ```
-src/
-├── price_optimizer/
-│   ├── config/         # Configuration settings
-│   │   └── config.py   # Modular configuration classes
-│   ├── data/           # Data preprocessing
-│   │   └── preprocessor.py  # Robust data handling
-│   ├── env/            # RL environment
-│   │   └── price_env.py    # Custom Gym environment
-│   ├── models/         # Neural networks and agent
-│   │   ├── networks.py     # Actor-Critic architectures
-│   │   └── sac_agent.py    # SAC implementation
-│   ├── train.py        # Training pipeline
-│   └── inference.py    # Inference pipeline
-└── main.py            # Main entry point
+├── Backend/
+│   ├── src/
+│   │   └── price_optimizer/
+│   │       ├── api/              # FastAPI endpoints
+│   │       │   ├── price_api.py
+│   │       │   └── visualization_endpoints.py
+│   │       ├── config/           # Configuration settings
+│   │       ├── data/             # Data preprocessing
+│   │       ├── models/           # Neural networks and agent
+│   │       └── utils/            # Utility functions
+│   ├── demo_data/                # Sample datasets
+│   └── docs/                     # Documentation
+│
+└── Frontend/
+    ├── app/                      # Next.js pages and API routes
+    │   ├── api/                  # Backend API integration
+    │   ├── page.tsx              # Main dashboard
+    │   └── layout.tsx            # Root layout
+    ├── components/               # React components
+    │   ├── ui/                   # Shadcn/UI components
+    │   ├── prediction-form.tsx
+    │   ├── training-form.tsx
+    │   └── price-sales-chart.tsx
+    └── lib/                      # Utility functions
 ```
 
 ## Technical Architecture
 
-### Data Pipeline
+### Backend Architecture
+
+#### Data Pipeline
 1. Data Loading & Validation
    - Required columns validation
    - Missing value handling
@@ -90,7 +105,7 @@ src/
    - Feature normalization
    - State validation
 
-### Environment Design
+#### Environment Design
 1. State Space
    - Historical prices (7 days)
    - Sales volumes
@@ -104,31 +119,34 @@ src/
    - Bounded by min/max limits
 
 3. Reward Function
-   ```python
-   reward = (
-       0.4 * sales_reward +
-       0.3 * price_reward +
-       0.15 * organic_conversion_reward +
-       0.15 * ad_conversion_reward +
-       exploration_bonus -
-       sales_drop_penalty
-   )
-   ```
+```python
+reward = (
+    0.4 * sales_reward +
+    0.3 * price_reward +
+    0.15 * organic_conversion_reward +
+    0.15 * ad_conversion_reward +
+    exploration_bonus -
+    sales_drop_penalty
+)
+```
 
-### Neural Networks
-1. Actor Network
-   - Input normalization
-   - Residual connections
-   - Twin output heads (mean, log_std)
-   - Tanh action squashing
-   - Stability measures
+### Frontend Architecture
 
-2. Critic Network
-   - Twin Q-networks
-   - State-action input
-   - Value bounds
-   - Gradient clipping
-   - Dropout regularization
+1. Next.js 14 App Router
+   - API routes for backend integration
+   - Server-side rendering for performance
+   - TypeScript for type safety
+
+2. Components
+   - Shadcn/UI for consistent design
+   - Chart.js for data visualization
+   - Forms for model training and predictions
+
+3. Features
+   - Real-time price predictions
+   - Historical data visualization
+   - Model training interface
+   - Performance monitoring
 
 ## Usage
 
@@ -136,6 +154,7 @@ src/
 
 Basic training:
 ```bash
+cd Backend
 python src/main.py --mode train --seed 42
 ```
 
@@ -170,7 +189,7 @@ python src/main.py --mode inference --checkpoint model.pt --batch-file products.
 ```python
 @dataclass
 class DataConfig:
-    data_path: str = "data/woolballhistory.csv"
+    data_path: str = "demo_data/woolballhistory.csv"
     history_window: int = 7
     train_test_split: float = 0.8
     features: List[str] = [
@@ -199,18 +218,6 @@ class EnvConfig:
     }
 ```
 
-### Model Configuration
-```python
-@dataclass
-class ModelConfig:
-    actor_learning_rate: float = 3e-4
-    critic_learning_rate: float = 3e-4
-    batch_size: int = 64
-    buffer_size: int = 100000
-    gamma: float = 0.99
-    tau: float = 0.005
-```
-
 ## Data Requirements
 
 Required CSV format:
@@ -226,22 +233,6 @@ Field specifications:
 - Total Profit: Decimal number
 - Total Sales: Integer
 - Predicted Sales: Integer/Float
-
-## Monitoring
-
-### Training Metrics
-- Actor/Critic losses
-- Alpha value
-- Reward components
-- State statistics
-- Action distributions
-
-### Evaluation Metrics
-- Average rewards
-- Price statistics
-- Sales performance
-- Conversion rates
-- Exploration metrics
 
 ## Best Practices
 
@@ -283,27 +274,6 @@ Field specifications:
    - Data validation
    - Model versioning
    - Performance tracking
-
-## Troubleshooting
-
-### Common Issues
-1. Training Instability
-   - Reduce learning rates
-   - Increase batch size
-   - Check reward scaling
-   - Validate state normalization
-
-2. Poor Performance
-   - Verify data quality
-   - Check reward weights
-   - Adjust exploration parameters
-   - Increase training duration
-
-3. Production Issues
-   - Validate input data
-   - Check model loading
-   - Monitor resource usage
-   - Enable error logging
 
 ## Contributing
 
