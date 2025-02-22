@@ -6,16 +6,22 @@ This guide outlines how to effectively demonstrate the price optimization system
 
 ### 1.1 Environment Preparation
 ```bash
-# Install dependencies
-uv pip install torch pandas numpy gymnasium pytorch-forecasting wandb scikit-learn
+# Clone repository
+git clone https://github.com/ShivamB25/PS3
+cd PS3
 
-# Clone and setup
-git clone <repository-url>
-cd price-optimizer
+# Backend Setup
+cd Backend
+uv sync
+source .venv/bin/activate
+
+# Frontend Setup
+cd ../Frontend
+bun install  # or npm install
 ```
 
 ### 1.2 Data Preparation
-1. Have both datasets ready:
+1. Verify demo datasets in Backend/demo_data:
    - woolballhistory.csv
    - soapnutshistory.csv
 
@@ -25,7 +31,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 # Load and plot historical data
-df = pd.read_csv("data/woolballhistory.csv")
+df = pd.read_csv("demo_data/woolballhistory.csv")
 plt.figure(figsize=(10, 6))
 plt.plot(df['Product Price'], label='Historical Prices')
 plt.axhline(y=df['Product Price'].median(), color='r', linestyle='--', label='Median Price')
@@ -49,30 +55,37 @@ plt.show()
 ### 2.2 Solution Architecture (3 minutes)
 1. Show system components:
 ```
-Data Pipeline → RL Environment → SAC Agent → Price Predictions
+Frontend (Next.js) → Backend (FastAPI) → RL Model (SAC) → Price Predictions
 ```
 
 2. Highlight key features:
-   - Continuous price optimization
+   - Real-time price optimization
+   - Interactive dashboard
    - Multi-objective rewards
    - Exploration mechanism
    - Safety constraints
 
 ### 2.3 Training Demonstration (5 minutes)
 
-1. Start training with Weights & Biases visualization:
+1. Start the backend server:
 ```bash
-# Run training with wandb logging
-python src/main.py --mode train --seed 42
+cd Backend
+uvicorn src.price_optimizer.api.price_api:app --reload --port 8000
 ```
 
-2. Show in Weights & Biases:
-   - Training metrics
-   - Reward components
+2. Launch the frontend:
+```bash
+cd Frontend
+bun run dev --port 3001  # or npm run dev -- --port 3001
+```
+
+3. Show in Web Interface:
+   - Training interface
+   - Real-time metrics
    - Price evolution
    - Sales performance
 
-3. Key points to highlight:
+4. Key points to highlight:
    - Price progression above median
    - Sales maintenance
    - Conversion rate stability
@@ -80,11 +93,10 @@ python src/main.py --mode train --seed 42
 
 ### 2.4 Live Inference (5 minutes)
 
-1. Load trained model:
-```bash
-# Run inference
-python src/main.py --mode inference --checkpoint checkpoints/best_model.pt
-```
+1. Use the prediction interface:
+   - Enter current price
+   - View recommendations
+   - See visualization
 
 2. Show price recommendations:
    - Next day predictions
@@ -123,7 +135,9 @@ scenarios = [
 ### 3.1 Price Prediction Demo
 ```python
 from price_optimizer.inference import PricePredictor
-predictor = PricePredictor(config, "checkpoints/best_model.pt")
+
+# Backend API endpoint
+predictor = PricePredictor(config, "model_registry/best_model.pt")
 
 # Live price prediction
 current_price = float(input("Enter current price: "))
@@ -188,17 +202,19 @@ if norm_price > norm_median_price:
 
 ### 6.1 Pre-Demo
 - [ ] Test all dependencies
-- [ ] Prepare both datasets
+- [ ] Verify demo_data files
 - [ ] Train and save models
-- [ ] Setup Weights & Biases
+- [ ] Start Backend server
+- [ ] Launch Frontend
+- [ ] Test API endpoints
 - [ ] Prepare visualizations
-- [ ] Test inference scripts
 
 ### 6.2 During Demo
-- [ ] Monitor system resources
+- [ ] Monitor both servers
 - [ ] Keep terminal outputs clear
 - [ ] Have code examples ready
 - [ ] Track timing for each section
+- [ ] Show real-time updates
 
 ### 6.3 Post-Demo
 - [ ] Save generated predictions
@@ -211,22 +227,26 @@ if norm_price > norm_median_price:
 1. Technical Innovation
    - SAC algorithm adaptation
    - Custom reward design
-   - Stability measures
+   - Full-stack implementation
+   - Real-time visualization
 
 2. Business Impact
    - Progressive price optimization
    - Sales maintenance
    - Risk management
+   - User-friendly interface
 
 3. Practical Implementation
    - Production readiness
    - Monitoring capabilities
    - Safety constraints
+   - Easy deployment
 
 4. Future Potential
    - Multi-product optimization
    - Market adaptation
    - Enhanced exploration
+   - API integration
 
 Remember:
 - Keep the demo focused and concise
@@ -235,3 +255,4 @@ Remember:
 - Be prepared for questions
 - Demonstrate live functionality
 - Highlight business value
+- Showcase the user interface

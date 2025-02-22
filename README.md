@@ -158,14 +158,14 @@ cd Backend
 python src/main.py --mode train --seed 42
 ```
 
-Advanced training options:
+<!-- Advanced training options:
 ```bash
 # Custom configuration
 python src/main.py --mode train --seed 42 --config custom_config.py
 
 # Resume from checkpoint
 python src/main.py --mode train --seed 42 --resume checkpoint.pt
-```
+``` -->
 
 ### Inference
 
@@ -174,14 +174,14 @@ Basic inference:
 python src/main.py --mode inference --checkpoint path/to/checkpoint.pt
 ```
 
-Advanced inference:
+<!-- Advanced inference:
 ```bash
 # Custom prediction horizon
 python src/main.py --mode inference --checkpoint model.pt --days 14
 
 # Batch predictions
 python src/main.py --mode inference --checkpoint model.pt --batch-file products.csv
-```
+``` -->
 
 ## Configuration
 
@@ -285,4 +285,4 @@ Field specifications:
 
 ## License
 
-MIT License - see LICENSE file for details
+BSD-3 License - see LICENSE file for details
