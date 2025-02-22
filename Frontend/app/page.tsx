@@ -113,13 +113,28 @@ export default function Home() {
 
       setDebug(debugInfo)
 
-      // Get predictions using training data
-      const response = await fetch(`/api/visualize/history/${selectedProductId}`)
-      if (!response.ok) {
+
+      // Make prediction request
+      const predictionResponse = await fetch(`/api/predict/${selectedProductId}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(request)
+      })
+      
+      if (!predictionResponse.ok) {
+        const error = await predictionResponse.text()
+        throw new Error(`Failed to generate predictions: ${error}`)
+      }
+
+      // Get updated history data including predictions
+      const historyResponse = await fetch(`/api/visualize/history/${selectedProductId}`)
+      if (!historyResponse.ok) {
         throw new Error('Failed to fetch updated history data')
       }
       
-      const data = await response.json()
+      const data = await historyResponse.json()
       console.log('Received updated history data:', data)
       setHistoryData(data)
     } catch (err) {
