@@ -35,14 +35,21 @@ A sophisticated price optimization system using Soft Actor-Critic (SAC) reinforc
 
 1. Clone the repository:
 ```bash
-git clone <repository-url>
+git clone https://github.com/ShivamB25/PS3
 cd price-optimizer
 ```
 
-2. Install dependencies:
+2. Backend:
 ```bash
-uv pip install torch pandas numpy gymnasium pytorch-forecasting wandb scikit-learn
+uv sync
+source .venv/bin/activate
+uvicorn src.price_optimizer.api:app --reload --port 8000
+
 ```
+3. Frontend
+```bash
+bun install // npm i
+bun run dev --port 3001 // npm run dev --port 3001
 
 ## Project Structure
 
