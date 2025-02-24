@@ -130,9 +130,8 @@ celerybeat.pid
 # Environments
 .env
 .venv
-env/
+
 venv/
-ENV/
 env.bak/
 venv.bak/
 
@@ -175,5 +174,7 @@ cython_debug/
 *.pt
 wandb/**
 price_predictions.csv
+temp_train_*.csv
+temp_pred_*.csv
 docs/next_next.
 *.DS_Store
