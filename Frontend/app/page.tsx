@@ -4,6 +4,9 @@ import { useEffect, useState } from "react"
 import { PriceSalesChart } from "@/components/price-sales-chart"
 import { PredictionForm } from "@/components/prediction-form"
 import { ModelHistory } from "@/components/model-history"
+import { NetworkStatus } from "@/components/network-status"
+import { NetworkConfig } from "@/components/network-config"
+import { NetworkInsights } from "@/components/network-insights"
 import { api } from "@/lib/api"
 import type { ModelMetadata, PredictionRequest } from "@/types/api"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
@@ -68,13 +71,13 @@ export default function Home() {
       try {
         setIsLoading(true)
         setError(null)
-        
+
         // Get history data
         const response = await fetch(`/api/visualize/history/${selectedProductId}`)
         if (!response.ok) {
           throw new Error('Failed to fetch history data')
         }
-        
+
         const data = await response.json()
         console.log('Received history data:', data)
         setHistoryData(data)
@@ -122,7 +125,7 @@ export default function Home() {
         },
         body: JSON.stringify(request)
       })
-      
+
       if (!predictionResponse.ok) {
         const error = await predictionResponse.text()
         throw new Error(`Failed to generate predictions: ${error}`)
@@ -133,7 +136,7 @@ export default function Home() {
       if (!historyResponse.ok) {
         throw new Error('Failed to fetch updated history data')
       }
-      
+
       const data = await historyResponse.json()
       console.log('Received updated history data:', data)
       setHistoryData(data)
@@ -187,19 +190,32 @@ export default function Home() {
       />
 
       {selectedProductId && modelData[selectedProductId] ? (
-        <div className="grid gap-6 md:grid-cols-[2fr_1fr]">
-          <PriceSalesChart data={historyData} />
+        <>
+          <div className="grid gap-6 md:grid-cols-[2fr_1fr]">
+            <PriceSalesChart data={historyData} />
 
-          <Card className="p-6">
-            <h3 className="mb-4 text-lg font-semibold">Generate Predictions</h3>
-            <PredictionForm onSubmit={handlePrediction} isLoading={isLoading} />
-            {debug && (
-              <pre className="mt-4 p-4 bg-gray-100 rounded-lg overflow-auto text-xs">
-                {debug}
-              </pre>
-            )}
-          </Card>
-        </div>
+            <Card className="p-6">
+              <h3 className="mb-4 text-lg font-semibold">Generate Predictions</h3>
+              <PredictionForm onSubmit={handlePrediction} isLoading={isLoading} />
+              {debug && (
+                <pre className="mt-4 p-4 bg-gray-100 rounded-lg overflow-auto text-xs">
+                  {debug}
+                </pre>
+              )}
+            </Card>
+          </div>
+
+          <div className="mt-8 space-y-6">
+            <h2 className="text-2xl font-bold">P2P Network</h2>
+            <div className="grid gap-6 md:grid-cols-[1fr_2fr]">
+              <div className="space-y-6">
+                <NetworkStatus />
+                <NetworkConfig />
+              </div>
+              <NetworkInsights />
+            </div>
+          </div>
+        </>
       ) : (
         <Card className="p-6">
           <h3 className="text-lg font-semibold">No Model Selected</h3>

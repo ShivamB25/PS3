@@ -1,0 +1,19 @@
+{
+    "mode": "private",
+    "company_id": "example_company_123",
+    "stores": [
+        "store_1",
+        "store_2",
+        "store_3"
+    ],
+    "privacy": {
+        "anonymize_data": true,
+        "encrypt_connection": true,
+        "data_sharing": {
+            "price_data": "ranges_only",
+            "sales_data": "aggregated",
+            "trends": "full"
+        },
+        "encryption_level": "high"
+    }
+}
